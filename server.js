@@ -7,13 +7,14 @@ const globalErrorHandler = require("./middlewares/errorMiddleware");
 const CategoryRoute = require("./routes/categoryRoute");
 const subCategoryRoute = require("./routes/subCategoryRoute");
 const brandRoute = require("./routes/brandRoute");
-
-
+const productRoute = require("./routes/productRoute");
 
 dotenv.config({ path: "config.env" });
 
-
 const app = express();
+//{ price: { '$gte': '20' }, ratingAvg: { '$gte': '2' } }  not { 'price[$gte]': '20', 'ratingAvg[$gte]': '2' }
+app.set("query parser", "extended");
+
 // --> .env file configuration
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
@@ -30,6 +31,7 @@ app.use(express.json());
 app.use("/api/v1/categories", CategoryRoute);
 app.use("/api/v1/subcategories", subCategoryRoute);
 app.use("/api/v1/brands", brandRoute);
+app.use("/api/v1/products", productRoute);
 
 app.all("/{*any}", (req, res, next) => {
   next(new ApiError(`can't find this rout : ${req.originalUrl}`, 404));
