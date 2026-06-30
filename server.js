@@ -1,31 +1,33 @@
+// core modules
+const path = require("path");
+
+// third party modules
 const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
+const globalErrorHandler = require("./middlewares/errorMiddleware");
+
+//local modules
 const dbConnection = require("./config/database");
 const ApiError = require("./utils/ApiError");
-const globalErrorHandler = require("./middlewares/errorMiddleware");
 const CategoryRoute = require("./routes/categoryRoute");
 const subCategoryRoute = require("./routes/subCategoryRoute");
 const brandRoute = require("./routes/brandRoute");
 const productRoute = require("./routes/productRoute");
 
-dotenv.config({ path: "config.env" });
-
+// middleware used in  configurations
 const app = express();
-//{ price: { '$gte': '20' }, ratingAvg: { '$gte': '2' } }  not { 'price[$gte]': '20', 'ratingAvg[$gte]': '2' }
-app.set("query parser", "extended");
-
-// --> .env file configuration
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "uploads")));
+app.set("query parser", "extended"); // { 'price[$gte]': '20', 'ratingAvg[$gte]': '2' }
+dotenv.config({ path: "config.env" });
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
   console.log(`The application mode in : ${process.env.NODE_ENV}`);
 }
 
-// --> database connection
+// db connection
 dbConnection();
-
-// middlewares
-app.use(express.json());
 
 // --> Mount Routes of the application
 app.use("/api/v1/categories", CategoryRoute);

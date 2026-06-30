@@ -14,16 +14,22 @@ const {
   getBrands,
   updateBrand,
   deleteBrand,
+  uploadImageMiddleWare,
+  imageProccess,
 } = require("../services/brandService");
-
 
 router
   .route("/")
   .get(getBrands)
-  .post(createBrandValidator, createBrand);
+  .post(
+    uploadImageMiddleWare,
+    imageProccess,
+    createBrandValidator,
+    createBrand,
+  );
 router
   .route("/:id")
   .get(getBrandValidator, getBrand)
-  .post(updateBrandValidator, updateBrand)
+  .put(uploadImageMiddleWare, imageProccess, updateBrandValidator, updateBrand)
   .delete(deleteBrandValidator, deleteBrand);
 module.exports = router;

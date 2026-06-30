@@ -1,5 +1,23 @@
 const Brand = require("../models/brandModel");
+const asyncHandler = require("express-async-handler");
 const factory = require("./factoryHandler");
+const { uuid } = require("uuidv4");
+const sharp = require("sharp");
+const { uploadSingleImage } = require("../middlewares/uploadSingleImage");
+
+exports.imageProccess = asyncHandler(async (req, res, next) => {
+  const filename = `Brand-${uuid()}-${Date.now()}.jpeg`;
+  await sharp(req.file.buffer)
+    .toFormat("jpeg")
+    .resize({ width: 600, height: 600 })
+    .jpeg({ quality: 90 })
+    .toFile(`uploads/brands/${filename}`);
+  // save the image name into db
+  req.body.image = filename;
+  next();
+});
+
+exports.uploadImageMiddleWare = uploadSingleImage("image");
 
 //--> desc      get all  Brands with pagination
 //--> route     GET /api/v1/Brands
