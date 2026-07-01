@@ -107,4 +107,28 @@ const productSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+const setImageUrl = (doc) => {
+  if (doc.image) {
+    const imageUrl = `${process.env.BASE_URL}/products/${doc.image}`;
+    doc.image = imageUrl;
+  }
+  if (doc.imagesOfProduct) {
+    const imagesList = [];
+    doc.imagesOfProduct.forEach((element) => {
+      const imageUrl = `${process.env.BASE_URL}/products/${element}`;
+      imagesList.push(imageUrl);
+    });
+    doc.imagesOfProduct = imagesList;
+  }
+};
+
+// this working on findOne , findAll and  update
+productSchema.post("init", function (doc) {
+  setImageUrl(doc);
+});
+// this working create
+productSchema.post("save", function (doc) {
+  setImageUrl(doc);
+});
+
 module.exports = mongoose.model("Product", productSchema);

@@ -3,7 +3,7 @@ const asyncHandler = require("express-async-handler");
 const factory = require("./factoryHandler");
 const { uuid } = require("uuidv4");
 const sharp = require("sharp");
-const { uploadSingleImage } = require("../middlewares/uploadSingleImage");
+const { uploadSingleImage } = require("../middlewares/uploadImages");
 
 exports.imageProccess = asyncHandler(async (req, res, next) => {
   const filename = `Brand-${uuid()}-${Date.now()}.jpeg`;
