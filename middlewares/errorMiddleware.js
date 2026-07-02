@@ -1,9 +1,15 @@
+const ApiError = require("../utils/ApiError");
+
 const globalErrorHandler = (err, req, res, next) => {
   err.status = err.status || "error";
   err.statusCode = err.statusCode || 500;
   if (process.env.NODE_ENV === "development") {
     sendErrorInDevelopment(err, res);
   } else {
+    if (err.name === "JsonWebTokenError")
+      err = new ApiError("invalid token , please login again ", 401);
+    if (err.name === "TokenExpiredError")
+      err = new ApiError("expire  token , please login again ", 401);
     sendErrorInProduction(err, res);
   }
 };
@@ -16,6 +22,7 @@ const sendErrorInProduction = (err, res) => {
 };
 
 const sendErrorInDevelopment = (err, res) => {
+  console.log(err.name);
   res.status(err.statusCode).json({
     status: err.status,
     message: err.message,

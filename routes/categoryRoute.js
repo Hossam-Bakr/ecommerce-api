@@ -19,6 +19,7 @@ const {
   uploadImageMiddleWare,
   imageProccess,
 } = require("../services/categoryService");
+const AuthSevice = require("../services/authSevice");
 
 router.use("/:categoryId/subcategories/", subCategoryRoute);
 
@@ -26,6 +27,7 @@ router
   .route("/")
   .get(getCategories)
   .post(
+    AuthSevice.protect,
     uploadImageMiddleWare,
     imageProccess,
     createCategoryValidator,
