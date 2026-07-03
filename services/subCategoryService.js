@@ -1,34 +1,48 @@
 const subCategoryModel = require("../models/subCategoryModel");
 const factory = require("./factoryHandler");
 
-//--> desc      create subCategory
-//--> route     POST /api/v1/subCategories
-//--> access    private
+/**
+ * @desc    Create new subcategory
+ * @route   POST /api/v1/subcategories
+ * @route   POST /api/v1/categories/:categoryId/subcategories
+ * @access  Private - Admin, Manager
+ */
 exports.createSubCategory = factory.createOne(subCategoryModel);
 
-//--> desc      get specific subCategory
-//--> route     GET /api/v1/subCategories/:id
-//--> access    public
-exports.getsubCategory = factory.getOne(subCategoryModel);
+/**
+ * @desc    Get specific subcategory by id
+ * @route   GET /api/v1/subcategories/:id
+ * @access  Public
+ */
+exports.getSubCategory = factory.getOne(subCategoryModel);
 
-//--> desc      update specific subCategory
-//--> route     PUT /api/v1/subCategories/:id
-//--> access    private
-exports.updatesubCategory = factory.updateOne(subCategoryModel);
+/**
+ * @desc    Update specific subcategory by id
+ * @route   PUT /api/v1/subcategories/:id
+ * @access  Private - Admin, Manager
+ */
+exports.updateSubCategory = factory.updateOne(subCategoryModel);
 
-//--> desc      delete specific subCategory
-//--> route     DELETE  /api/v1/subCategories/:id
-//--> access    private
+/**
+ * @desc    Delete specific subcategory by id
+ * @route   DELETE /api/v1/subcategories/:id
+ * @access  Private - Admin
+ */
+exports.deleteSubCategory = factory.deleteOne(subCategoryModel);
 
-exports.deletesubCategory = factory.deleteOne(subCategoryModel);
+/**
+ * @desc    Get all subcategories with optional category filter
+ * @route   GET /api/v1/subcategories
+ * @route   GET /api/v1/categories/:categoryId/subcategories
+ * @access  Public
+ */
+exports.getSubCategories = factory.getAll(subCategoryModel);
 
-//--> desc      get all  categories with pagination
-//--> route     GET /api/v1/categories
-//--> access    public
-exports.getsubCategories = factory.getAll(subCategoryModel);
-
-//   middleware for setting category id to body for create subcategory based on category
-// route /api/v1/categories/:categoryId/subcategories
+/**
+ * @desc    Set category id in request body for nested subcategory creation
+ * @route   Middleware for POST /api/v1/categories/:categoryId/subcategories
+ * @access  Private - Admin, Manager
+ */
 exports.setCategoryIdInBody = (req, res, next) => {
   if (!req.body.category) {
     req.body.category = req.params.categoryId;
@@ -36,12 +50,16 @@ exports.setCategoryIdInBody = (req, res, next) => {
   next();
 };
 
-// Nested Route
-// GET /api/v1/categories/:categoryId/subcategories/
+/**
+ * @desc    Create filter object for nested subcategory routes
+ * @route   Middleware for GET /api/v1/categories/:categoryId/subcategories
+ * @access  Public
+ */
 exports.createFilterObj = (req, res, next) => {
   const filterObject = req.params.categoryId
     ? { category: req.params.categoryId }
     : {};
+
   req.filterObject = filterObject;
   next();
 };

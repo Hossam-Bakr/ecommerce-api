@@ -38,6 +38,10 @@ const userSchema = mongoose.Schema(
       default: "user",
     },
 
+    hashedResetCode: String,
+    resetCodeExpireDate: Date,
+    resetCodeVerified: Boolean,
+
     active: {
       type: Boolean,
       default: true,
