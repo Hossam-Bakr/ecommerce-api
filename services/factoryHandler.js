@@ -10,11 +10,13 @@ const ApiFeature = require("../utils/apiFeatures");
 exports.deleteOne = (Model) => {
   return asyncHandler(async (req, res, next) => {
     const { id } = req.params;
-    const documents = await Model.findByIdAndDelete(id);
+    const document = await Model.findById(id);
 
-    if (!documents) {
+    if (!document) {
       return next(new ApiError(`there is no item with this id :${id} `, 404));
     }
+
+    await document.deleteOne();
 
     res.status(204).json();
   });
@@ -40,6 +42,7 @@ exports.updateOne = (Model) => {
       );
     }
 
+    document.save();
     res.status(200).json({ data: document });
   });
 };
@@ -61,10 +64,15 @@ exports.createOne = (Model) => {
  * @param   {Object} Model - Mongoose model
  * @returns {Function} Express async middleware
  */
-exports.getOne = (Model) => {
+exports.getOne = (Model, populationOpt) => {
   return asyncHandler(async (req, res, next) => {
-    const document = await Model.findById(req.params.id);
-
+    // build query
+    let query = Model.findById(req.params.id);
+    if (populationOpt) {
+      query = Model.findById(req.params.id).populate(populationOpt);
+    }
+    //execute query
+    const document = await query;
     if (!document) {
       return next(
         new ApiError(
@@ -87,17 +95,14 @@ exports.getOne = (Model) => {
 exports.getAll = (Model, modelName = "") => {
   return asyncHandler(async (req, res) => {
     // Handle nested route filters such as category or parent resource filtering
-    let filterByCategory = {};
+    let filter = {};
     if (req.filterObject) {
-      filterByCategory = req.filterObject;
+      filter = req.filterObject;
     }
 
     // Build query with API features
     const countOfDocuments = await Model.countDocuments();
-    const ApiFeatureObj = new ApiFeature(
-      Model.find(filterByCategory),
-      req.query,
-    )
+    const ApiFeatureObj = new ApiFeature(Model.find(filter), req.query)
       .paginate(countOfDocuments)
       .filter()
       .select()

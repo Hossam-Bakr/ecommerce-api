@@ -104,7 +104,11 @@ const productSchema = new mongoose.Schema(
       ref: "Brand",
     },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true }, // So `res.json()` and other `JSON.stringify()` functions include virtuals
+    toObject: { virtuals: true },
+  },
 );
 
 const setImageUrl = (doc) => {
@@ -121,6 +125,13 @@ const setImageUrl = (doc) => {
     doc.imagesOfProduct = imagesList;
   }
 };
+
+productSchema.virtual("reviews", {
+  ref: "Review",
+  // to enable virtual populate
+  foreignField: "product",
+  localField: "_id",
+});
 
 // this working on findOne , findAll and  update
 productSchema.post("init", function (doc) {

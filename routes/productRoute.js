@@ -1,5 +1,5 @@
 const express = require("express");
-
+const reviewRoute = require("./reviewRoute");
 const router = express.Router();
 const {
   getProductValidator,
@@ -37,6 +37,13 @@ router
     createProductValidator,
     createProduct,
   );
+
+/**
+ * @desc    Get specific product reviews
+ * @route   GET /api/v1/products/productId/reviews
+ * @access  Public for GET - Private for POST (Admin, Manager)
+ */
+router.use("/:productId/reviews", reviewRoute);
 
 /**
  * @desc    Get, update, or delete specific product

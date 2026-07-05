@@ -64,7 +64,7 @@ exports.imageProccess = asyncHandler(async (req, res, next) => {
  * @route   GET /api/v1/products/:id
  * @access  Public
  */
-exports.getProduct = factory.getOne(Product);
+exports.getProduct = factory.getOne(Product, "reviews");
 
 /**
  * @desc    Create new product
