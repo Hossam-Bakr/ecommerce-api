@@ -46,6 +46,30 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: true,
     },
+
+    // child refernce
+    wishList: {
+      type: [mongoose.Schema.ObjectId],
+      ref: "Product",
+      default: [],
+    },
+
+    addresses: [
+      {
+        id: { type: mongoose.Schema.Types.ObjectId },
+        alias: {
+          type: String,
+          required: [true, "alias is required"],
+        },
+        details: {
+          type: String,
+          required: [true, "address details are required"],
+        },
+        phone: String,
+        city: String,
+        postalCode: String,
+      },
+    ],
   },
   { timestmaps: true },
 );

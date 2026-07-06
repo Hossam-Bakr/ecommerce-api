@@ -17,6 +17,8 @@ const productRoute = require("./routes/productRoute");
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
 const reviewRoute = require("./routes/reviewRoute");
+const wishlistRoute = require("./routes/wishlistRoute");
+const addressRoute = require("./routes/addressRoute");
 
 // middleware used in  configurations
 const app = express();
@@ -40,6 +42,8 @@ app.use("/api/v1/products", productRoute);
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/reviews", reviewRoute);
+app.use("/api/v1/wishlist", wishlistRoute);
+app.use("/api/v1/addresses", addressRoute);
 
 app.all("/{*any}", (req, res, next) => {
   next(new ApiError(`can't find this rout : ${req.originalUrl}`, 404));

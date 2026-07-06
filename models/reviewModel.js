@@ -21,6 +21,7 @@ const reviewSchema = new mongoose.Schema(
       ref: "User",
       required: [true, "Review must belong to a user"],
     },
+    // parent refernce (one to many relationship )
     product: {
       type: mongoose.Schema.ObjectId,
       ref: "Product",
