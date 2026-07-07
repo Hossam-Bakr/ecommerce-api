@@ -10,17 +10,9 @@ const globalErrorHandler = require("./middlewares/errorMiddleware");
 //local modules
 const dbConnection = require("./config/database");
 const ApiError = require("./utils/ApiError");
-const CategoryRoute = require("./routes/categoryRoute");
-const subCategoryRoute = require("./routes/subCategoryRoute");
-const brandRoute = require("./routes/brandRoute");
-const productRoute = require("./routes/productRoute");
-const userRoute = require("./routes/userRoute");
-const authRoute = require("./routes/authRoute");
-const reviewRoute = require("./routes/reviewRoute");
-const wishlistRoute = require("./routes/wishlistRoute");
-const addressRoute = require("./routes/addressRoute");
 
-// middleware used in  configurations
+const mountRoutes = require("./routes");
+
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "uploads")));
@@ -31,20 +23,9 @@ if (process.env.NODE_ENV === "development") {
   console.log(`The application mode in : ${process.env.NODE_ENV}`);
 }
 
-// db connection
 dbConnection();
 
-// --> Mount Routes of the application
-app.use("/api/v1/categories", CategoryRoute);
-app.use("/api/v1/subcategories", subCategoryRoute);
-// app.use("/api/v1/brands", brandRoute);
-app.use("/api/v1/products", productRoute);
-app.use("/api/v1/users", userRoute);
-app.use("/api/v1/auth", authRoute);
-app.use("/api/v1/reviews", reviewRoute);
-app.use("/api/v1/wishlist", wishlistRoute);
-app.use("/api/v1/addresses", addressRoute);
-
+mountRoutes(app);
 app.all("/{*any}", (req, res, next) => {
   next(new ApiError(`can't find this rout : ${req.originalUrl}`, 404));
 });
@@ -52,7 +33,6 @@ app.all("/{*any}", (req, res, next) => {
 // Global error handling middelware
 app.use(globalErrorHandler);
 
-// --> fire the application
 const PORT = process.env.PORT || 8000;
 
 const server = app.listen(PORT, () => {
