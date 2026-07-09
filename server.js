@@ -4,8 +4,11 @@ const path = require("path");
 // third party modules
 const express = require("express");
 const dotenv = require("dotenv");
+dotenv.config({ path: "config.env" });
 const morgan = require("morgan");
 const globalErrorHandler = require("./middlewares/errorMiddleware");
+const cors = require("cors");
+const compression = require("compression");
 
 //local modules
 const dbConnection = require("./config/database");
@@ -14,10 +17,12 @@ const ApiError = require("./utils/ApiError");
 const mountRoutes = require("./routes");
 
 const app = express();
+app.use(cors());
+app.use(compression());
+// app.options("*", cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "uploads")));
 app.set("query parser", "extended"); // { 'price[$gte]': '20', 'ratingAvg[$gte]': '2' }
-dotenv.config({ path: "config.env" });
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
   console.log(`The application mode in : ${process.env.NODE_ENV}`);
